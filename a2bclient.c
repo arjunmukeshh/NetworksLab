@@ -37,7 +37,17 @@ int main(){
 	bzero(buffer, sizeof(buffer));
 	recv(clientsocket, buffer, sizeof(buffer), 0);
 	printf("File Contents : \n%s",buffer);
-		
+	
+
+	// Open a file for writing. 
+	// (This will replace any existing file. Use "w+" for appending)
+	strcat(fname,"_new");
+	printf("\File name : %s",fname);
+	FILE *file = fopen(fname, "w");
+
+	int results = fputs(buffer, file);
+	
+	fclose(file);	
 
 	
 	close(clientsocket);
