@@ -1,42 +1,83 @@
-#include<stdlib.h>
 #include<stdio.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<netinet/in.h>
-#include<unistd.h>
-#include<strings.h>
+
 #include<string.h>
 
-int main(){
-	int clientsocket;
-	
-	clientsocket = socket(AF_INET , SOCK_STREAM , 0);
-	printf("[+] Client socket created");
-	
-	struct sockaddr_in clientaddress;
-	
-	clientaddress.sin_family = AF_INET;
-	clientaddress.sin_port = htons(9002);
-	clientaddress.sin_addr.s_addr = INADDR_ANY;
-	
-	int status = connect(clientsocket ,(struct sockaddr *)&clientaddress, sizeof(clientaddress));
-	if(status)
-		printf("[+] Client socket connected");
-		
-	char buffer[1000];
-	while(strcmp(buffer,"exit")!=0){
-		recv(clientsocket, buffer, sizeof(buffer), 0);
-	
-		printf("\nServer : %s",buffer);
-	
-		bzero(buffer, sizeof(buffer));
-		printf("\nClient : ");
-		scanf("%s",buffer);
-	
-		send(clientsocket, buffer, sizeof(buffer), 0);
-	}
-	close(clientsocket);
-	
-	
-	return 0;
+#include<sys/stat.h>
+
+#include<sys/types.h>
+
+#include<sys/socket.h>
+
+#include<netinet/in.h>
+
+#include<arpa/inet.h>
+
+int main()
+
+{
+
+    struct sockaddr_in client,server;
+
+    int s,n;
+
+    char b1[100],b2[100];
+
+    s=socket(AF_INET,SOCK_DGRAM,0);
+
+    
+
+    if(socket==0)
+
+    	perror("Conn. failed.");
+
+    
+
+    else
+
+    	printf("\nConnected");
+
+    
+
+    server.sin_family=AF_INET;
+
+    server.sin_port=2000;
+
+    server.sin_addr.s_addr=INADDR_ANY;
+
+    
+
+    printf("\nClient ready\n");
+
+    n=sizeof(server);
+
+    while(1)
+
+    {
+
+        printf("\nClient: ");
+
+        gets(b2);
+
+        sendto(s,b2,sizeof(b2),0,(struct sockaddr *) &server,n);
+
+        
+
+        if(strcmp(b2,"end")==0)
+
+            break;
+
+            
+
+        recvfrom(s,b1,sizeof(b1),0,NULL,NULL);
+
+        printf("\nServer: %s",b1);
+
+    }
+
+    
+
+    return 0;
+
+
+
 }
