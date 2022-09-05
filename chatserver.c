@@ -1,41 +1,87 @@
-#include<stdlib.h>
 #include<stdio.h>
-#include<sys/types.h>
-#include<sys/socket.h>
-#include<unistd.h>
-#include<netinet/in.h>
-#include<strings.h>
+
 #include<string.h>
 
-int main(){
-	char buffer[1000];
-	int server_socket;
-	server_socket = socket(AF_INET, SOCK_STREAM , 0);
-	
-	printf("[+] Server created ");
-	struct sockaddr_in server_address;
-	server_address.sin_family = AF_INET;
-	server_address.sin_port = htons(9002);
-	server_address.sin_addr.s_addr = INADDR_ANY;
-	
-	
-	bind(server_socket , (struct sockaddr*)&server_address, sizeof(server_address));
-	printf("\n[+] Socket and port 9002 are bound ");
-	listen(server_socket, 5);
-	printf("\n[+] Listening for clients in port 9002");
-	int client_socket; 
-	client_socket = accept(server_socket , NULL, NULL);
-	
-	while(strcmp(buffer,"exit")!=0){
-		printf("\nServer : ");
-		scanf("%s",buffer);
-		send(client_socket , buffer , sizeof(buffer), 0 );
-		bzero(buffer, sizeof(buffer));
-	
-		recv(client_socket, buffer, sizeof(buffer),0);
-		printf("\nClient : %s",buffer);
-	}
-	close(server_socket);
-	
-	return 0;
+#include<sys/stat.h>
+
+#include<sys/types.h>
+
+#include<sys/socket.h>
+
+#include<netinet/in.h>
+
+#include<arpa/inet.h>
+
+
+
+int main()
+
+{
+
+    struct sockaddr_in client,server;
+
+    int s,n;
+
+    fd_set readfds;
+
+    
+
+    char b1[100],b2[100];
+
+    s=socket(AF_INET,SOCK_DGRAM,0);
+
+    
+
+    server.sin_family=AF_INET;
+
+    server.sin_port=2000;
+
+    server.sin_addr.s_addr=INADDR_ANY;
+
+    
+
+    if(bind(s,(struct sockaddr *)&server,sizeof(server))<0)
+
+    {
+
+    	perror("\nBind failed");
+
+    	exit(EXIT_FAILURE);
+
+    }
+
+    
+
+    
+
+    printf("\nServer bound.\n");
+
+    printf("Server listening on port #2000");
+
+    n=sizeof(client);
+
+    while(1)
+
+    {
+
+        recvfrom(s,b1,sizeof(b1),0,(struct sockaddr *) &client,&n);
+
+        if(!(strcmp(b1,"end")))
+
+            break;
+
+        printf("\nClient:%s",b1);
+
+        printf("\nServer:");
+
+        gets(b2);
+
+        sendto(s,b2,sizeof(b2),0,(struct sockaddr *) &client,n);
+
+    }
+
+    return 0;
+
+ 
+
 }
